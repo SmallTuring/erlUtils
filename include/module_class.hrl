@@ -1,0 +1,2 @@
+-compile({parse_transform, module_class}).
+-include("module_class_def.hrl").
