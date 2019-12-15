@@ -556,20 +556,28 @@ lMonthName(11) -> <<"November">>;
 lMonthName(12) -> <<"December">>.
 
 %% 年月日的数字version
--spec dateNum() -> integer().
-dateNum() ->
+-spec dateNumber() -> integer().
+dateNumber() ->
    {Year, Month, Day} = erlang:date(),
    Year * 10000 + Month * 100 + Day.
 
 %% 年月日的数字version
--spec dateNum(date()) -> integer().
-dateNum({Year, Month, Day}) ->
+-spec dateNumber(date()) -> integer().
+dateNumber({Year, Month, Day}) ->
    Year * 10000 + Month * 100 + Day.
 
 %% 年月日的数字version
--spec dateNum(Year :: year(), Month :: month(), Day :: day()) -> integer().
-dateNum(Year, Month, Day) ->
+-spec dateNumber(Year :: year(), Month :: month(), Day :: day()) -> integer().
+dateNumber(Year, Month, Day) ->
    Year * 10000 + Month * 100 + Day.
+
+%% dateNumber 反转
+-spec numberDate(DateNumber :: integer()) -> date().
+numberDate(DateNumber) ->
+   Y = DateNumber div 10000,
+   M = DateNumber rem 10000 div 100,
+   D = DateNumber rem 100,
+   {Y, M, D}.
 
 %% 秒转为天数 和 time()
 -spec secToDayTime(Secs :: timestamp()) -> {Day :: integer(), Time :: time()}.

@@ -110,3 +110,36 @@ string_to_term(String) ->
       _Error ->
          undefined
    end.
+
+%% 列表转utf8编码的列表
+listToUtfString(List) ->
+   unicode:characters_to_list(erlang:list_to_binary(List), utf8).
+
+%%汉字unicode编码范围 0x4e00 - 0x9fa5
+% (4 * 16 * 16 * 16 + 14 * 16 * 16)
+-define(UNICODE_CHINESE_BEGIN, 16#4e00).
+% (9 * 16 * 16 * 16 + 15 * 16 * 16 + 10 * 16 + 5)
+-define(UNICODE_CHINESE_END, 16#9fa5).
+
+%% desc   获取字符串汉字和非汉字的个数
+%% parm   UTF8String  			UTF8编码的字符串
+%% return {汉字个数,非汉字个数}
+getChineseNum(UTF8String) ->
+   UnicodeList = unicode:characters_to_list(list_to_binary(UTF8String)),
+   Fun = fun(Num, {Sum}) ->
+      case Num >= ?UNICODE_CHINESE_BEGIN andalso Num =< ?UNICODE_CHINESE_END of
+         true ->
+            {Sum + 1};
+         false ->
+            {Sum}
+      end
+         end,
+   {ChineseCount} = lists:foldl(Fun, {0}, UnicodeList),
+   OtherCount = length(UnicodeList) - ChineseCount,
+   {ChineseCount, OtherCount}.
+
+termToBase64(Term) ->
+   base64:encode(term_to_binary(Term)).
+
+base64ToTerm(Base64String) ->
+   binary_to_term(base64:decode(Base64String)).
