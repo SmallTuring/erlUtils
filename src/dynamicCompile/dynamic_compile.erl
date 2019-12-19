@@ -54,7 +54,7 @@
 
 -import(lists, [reverse/1, keyreplace/4]).
 
--export([module_src/1, module_lt/1, modules/0]).
+-export([module_src/1, module_lt/1, modules/0, module_new/2]).
 
 -record(module, {name = 0, loadtime = 0, src}).
 
