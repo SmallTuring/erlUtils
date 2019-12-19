@@ -10,7 +10,7 @@
 
 -export([start/1, start/0, get_name/1, init/1, handle_call/3, new/1, new/2]).
 %% API
--export([set/3]).
+-export([set/3, gen/2]).
 
 -record(dynamic_kvs, {
    modules = [] :: [{Mod :: module(), [{Key :: atom(), Val :: any()}]}]
@@ -53,7 +53,7 @@ handle_call({set, ModuleName, Key, Val}, _, DynamicKvs) ->
       false ->
          {reply, {error, not_find_module}, DynamicKvs};
       {value, {_, Kvs}, RemainMods} ->
-         NewKvs = com_lists:keyreplace(Key, 1, Kvs, {Key, Val}),
+         NewKvs = lists:keyreplace(Key, 1, Kvs, {Key, Val}),
          gen(ModuleName, NewKvs),
          {reply, ok, DynamicKvs#dynamic_kvs{modules = [{ModuleName, NewKvs} | RemainMods]}}
    end.
@@ -66,7 +66,7 @@ gen(ModuleName, Kvs) ->
    Meta = meta:new(ModuleName),
    Fun =
       fun({K, V}, MetaTemp) ->
-         FunStr = concat([K, "() ->\n\t", com_util:term_to_string(V), ".\n"]),
+         FunStr = concat([K, "() ->\n\t", utTypeCast:term_to_string(V), ".\n"]),
          case meta:add_func(MetaTemp, FunStr) of
             {ok, MetaTemp2} -> MetaTemp2;
             Error ->
