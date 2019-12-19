@@ -652,12 +652,12 @@ compile(#meta_mod{} = MetaMod, Options) ->
                      Bin);
                false -> ok
             end,
-         io:format("Module ~p Res ~p ~n", [Module, Res]),
+         %io:format("Module ~p Res ~p ~n", [Module, Res]),
          case Res of
             ok ->
-               io:format("Module2 ~p ~n", [Module]),
+               %io:format("Module2 ~p ~n", [Module]),
                catch code:purge(Module),
-               io:format("Module3 ~p  ~n", [Module]),
+               %io:format("Module3 ~p  ~n", [Module]),
                %%case code:load_binary(Module, atom_to_list(Module) ++ ".erl", Bin) of %% Fix Xref bug
                case catch code:load_binary(Module, atom_to_list(Module), Bin) of
                   {module, _Module} ->
