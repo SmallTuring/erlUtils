@@ -268,3 +268,12 @@ tk2() ->
 
 tk3() ->
    erlang:system_time(nanosecond).
+
+tk4() ->
+   make_ref().
+
+tk5() ->
+   erlang:unique_integer([positive])  rem 16.
+
+tk6() ->
+   erlang:monotonic_time(second).
