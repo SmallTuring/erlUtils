@@ -159,3 +159,21 @@ cc7(0, F) ->
 cc7(N, _F) ->
    F = float(N),
    cc7(N - 1, F).
+
+s1(0, Fun) ->
+   ok;
+s1(N, Fun) ->
+   ?MODULE:Fun(),
+   s1(N - 1, Fun).
+
+st1() ->
+   size(<<"fdfdfdd:fdffd:\rn\n:fdfd fd df df dfddfdf">>).
+
+st2() ->
+   byte_size(<<"fdfdfdd:fdffd:\rn\n:fdfd fd df df dfddfdf">>).
+
+st3() ->
+   iolist_size(<<"fdfdfdd:fdffd:\rn\n:fdfd fd df df d:fddfdf">>).
+
+st4() ->
+   size(<<"fdfdfdd:fdffd:\rn\n:fdfd fd df df dfddfdf">>).

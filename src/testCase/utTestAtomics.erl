@@ -49,7 +49,7 @@ ttt4(0) ->
    io:format("IMY************dic ~p~n",[atomics:get(persistent_term:get(ref), 1)]),
    ok;
 ttt4(N) ->
-   atomics:add(persistent_term:get(ref) , 1, 1),
+   atomics:add_get(persistent_term:get(ref) , 1, 1),
    ttt4(N - 1).
 
 tt5(N) ->
