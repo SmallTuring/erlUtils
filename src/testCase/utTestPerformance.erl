@@ -177,3 +177,34 @@ st3() ->
 
 st4() ->
    size(<<"fdfdfdd:fdffd:\rn\n:fdfd fd df df dfddfdf">>).
+
+-record(state, {
+   lSock
+   , ref
+   , cliMod
+   , sockMod
+}).
+
+h1(0, Fun) ->
+   ok;
+h1(N, Fun) ->
+   Ref1 = make_ref(),
+   Ref2 = make_ref(),
+   ?MODULE:Fun({inet_async, Ref1, Ref2, {432423,3443,55}}, #state{lSock = Ref1, ref = Ref1}),
+   h1(N - 1, Fun).
+
+hm1({inet_async, LSock, Ref, Msg}, #state{lSock = LSock, ref = Ref, cliMod = _CliMod, sockMod = _SockMod} = State) ->
+   ok;
+hm1({inet_async, LSock, Ref, Msg}, #state{lSock = LSock1, ref = Ref1, cliMod = _CliMod, sockMod = _SockMod} = State) ->
+   false.
+
+hm2({inet_async, LSock, Ref, Msg}, #state{lSock = LSock1, ref = Ref1, cliMod = _CliMod, sockMod = _SockMod} = State) ->
+   case LSock == LSock1 andalso Ref == Ref1 of
+      true ->
+         ok;
+      _ ->
+         false
+   end.
+
+
+
