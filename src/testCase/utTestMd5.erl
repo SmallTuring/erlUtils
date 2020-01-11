@@ -100,6 +100,21 @@ tt7(N, Hex) ->
    String,
    tt7(N - 1, Hex).
 
+u4(0, Fun) ->
+   ?MODULE:Fun();
+u4(N, Fun) ->
+   ?MODULE:Fun(),
+   u4(N - 1, Fun).
+
+uuid() ->
+   erlang:md5(term_to_binary({erlang:system_time(nanosecond), rand:uniform(134217727), make_ref()})).
+uuid2() ->
+   term_to_binary({erlang:system_time(nanosecond), rand:uniform(134217727), make_ref()}).
+
+get_uuid() ->
+   <<(crypto:strong_rand_bytes(8))/bytes,
+      (erlang:term_to_binary(erlang:now()))/bytes>>.
+
 u1(0) ->
    crypto:strong_rand_bytes(16);
 u1(N) ->

@@ -177,3 +177,49 @@ st3() ->
 
 st4() ->
    size(<<"fdfdfdd:fdffd:\rn\n:fdfd fd df df dfddfdf">>).
+
+gm(0, Fun) ->
+   ok;
+gm(N, Fun) ->
+   [?MODULE:Fun(M) || M <- [1,2,3,4,5,6,7,8,9,10,11,12]],
+   gm(N - 1, Fun).
+
+%% 这个更快
+getMonth(1) ->
+   <<"Jan">>;
+getMonth(2) ->
+   <<"Feb">>;
+getMonth(3) ->
+   <<"Mar">>;
+getMonth(4) ->
+   <<"Apr">>;
+getMonth(5) ->
+   <<"May">>;
+getMonth(6) ->
+   <<"Jun">>;
+getMonth(7) ->
+   <<"Jul">>;
+getMonth(8) ->
+   <<"Aug">>;
+getMonth(9) ->
+   <<"Sep">>;
+getMonth(10) ->
+   <<"Oct">>;
+getMonth(11) ->
+   <<"Nov">>;
+getMonth(12) ->
+   <<"Dec">>.
+
+getMonth2(Month) ->
+   element(Month,{<<"Jan">>,<<"Feb">>,<<"Mar">>,<<"Apr">>,<<"May">>,<<"Jun">>,<<"Jul">>,<<"Aug">>,<<"Sep">>,<<"Oct">>,<<"Nov">>,<<"Dec">>}).
+
+-define(Month, #{1 => <<"Jan">>, 2 => <<"Feb">>, 3 => <<"Mar">>, 4 => <<"Apr">>, 5 => <<"May">>, 6 => <<"Jun">>, 7 => <<"Jul">>, 8 => <<"Aug">>, 9 => <<"Sep">>, 10 => <<"Oct">>, 11 => <<"Nov">>, 12 => <<"Dec">>}).
+getMonth3(Month) ->
+   case ?Month of
+      #{Month := MonthStr} ->
+         MonthStr;
+      _ ->
+         <<"">>
+   end.
+
+
