@@ -113,7 +113,7 @@ uuid2() ->
 
 get_uuid() ->
    <<(crypto:strong_rand_bytes(8))/bytes,
-      (erlang:term_to_binary(erlang:now()))/bytes>>.
+      (erlang:term_to_binary(erlang:timestamp()))/bytes>>.
 
 u1(0) ->
    crypto:strong_rand_bytes(16);

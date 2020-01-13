@@ -278,3 +278,16 @@ Unique Integers on a Runtime System Instance
         支持稀疏存储，执行array:set(100,value,array:new())，那么[0,99]都会被设置为默认值(undefined)，该默认值可修改。
         在实现上，array最外层被包装为一个record:
      ... 其他等待被添加   
+     
+     %% Module	Description
+     %% sets	   sets, a collection of unique elements.
+     %% gb_sets	sets, but based on a general balanced data structure
+     %% gb_tree	a general balanced tree
+     %% dict	   maps, also called associative arrays
+     %% queue	   double-ended queues
+     %% ets	   hash tables and ordered sets (trees), stored outside the process
+     %% dets	   on-disk hash tables
+     (请注意：不常用的模块ordset和 orddict只是有序列表，因此对于诸如插入之类的常见操作具有O（n）)
+     % Suggestion：
+     % elments count: 0 － 100 | 100 - 10000  |  10000 -
+     % our select   :  list   |      ets     |  gb_tree
