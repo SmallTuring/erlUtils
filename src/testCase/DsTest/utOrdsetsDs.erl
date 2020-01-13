@@ -1,22 +1,22 @@
--module(ordsets).
+-module(utOrdsetsDs).
 -compile([nowarn_unused_function, nowarn_unused_vars, nowarn_export_all]).
 
 -export([start/2]).
 
 start(Num, Pid) ->
    Ds = init(Num),
-   erlang:statistics(wall_clock),
+   Time1 = erlang:system_time(nanosecond),
    NewDsI = insert(Num, Ds),
-   {_, TimeI} = erlang:statistics(wall_clock),
+   Time2 = erlang:system_time(nanosecond),
    NewDsR = read(Num, NewDsI),
-   {_, TimeR} = erlang:statistics(wall_clock),
-   NewOrdSetU = update(Num, NewDsR),
-   {_, TimeU} = erlang:statistics(wall_clock),
-   NewOrdSetF = for(Num, NewOrdSetU),
-   {_, TimeF} = erlang:statistics(wall_clock),
-   delete(Num, NewOrdSetF),
-   {_, TimeD} = erlang:statistics(wall_clock),
-   erlang:send(Pid, {over, self(), TimeI, TimeR, not_support, TimeF, TimeD}),
+   Time3 = erlang:system_time(nanosecond),
+   NewDsU = update(Num, NewDsR),
+   Time4 = erlang:system_time(nanosecond),
+   NewDsF = for(Num, NewDsU),
+   Time5 = erlang:system_time(nanosecond),
+   delete(Num, NewDsF),
+   Time6 = erlang:system_time(nanosecond),
+   erlang:send(Pid, {over, self(), Time2 - Time1, Time3 - Time2, not_support, Time5 - Time4, Time6 - Time5}),
    exit(normal).
 
 init(_Num) ->
@@ -37,7 +37,7 @@ read(Num, Ds) ->
    Value = ordsets:is_element(Key, Ds),
    read(Num - 1, Ds).
 
-update(0, Ds) ->
+update(Num, Ds) ->
    Ds.
 
 for(Num, Ds) ->

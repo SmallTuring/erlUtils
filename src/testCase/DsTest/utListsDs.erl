@@ -1,22 +1,25 @@
--module(listsDs).
+-module(utListsDs).
 -compile([nowarn_unused_function, nowarn_unused_vars, nowarn_export_all]).
 
 -export([start/2]).
 
-start(Num, Pid) ->
+start(Num, Pid) when Num =< 32768 ->
    Ds = init(Num),
-   erlang:statistics(wall_clock),
+   Time1 = erlang:system_time(nanosecond),
    NewDsI = insert(Num, Ds),
-   {_, TimeI} = erlang:statistics(wall_clock),
-   NewArrR = read(Num, NewDsI),
-   {_, TimeR} = erlang:statistics(wall_clock),
-   NewDsU = update(Num, NewArrR),
-   {_, TimeU} = erlang:statistics(wall_clock),
+   Time2 = erlang:system_time(nanosecond),
+   NewDsR = read(Num, NewDsI),
+   Time3 = erlang:system_time(nanosecond),
+   NewDsU = update(Num, NewDsR),
+   Time4 = erlang:system_time(nanosecond),
    NewDsF = for(NewDsU, NewDsU),
-   {_, TimeF} = erlang:statistics(wall_clock),
+   Time5 = erlang:system_time(nanosecond),
    delete(Num, NewDsF),
-   {_, TimeD} = erlang:statistics(wall_clock),
-   erlang:send(Pid, {over, self(), TimeI, TimeR, TimeU, TimeF, TimeD}),
+   Time6 = erlang:system_time(nanosecond),
+   erlang:send(Pid, {over, self(), Time2 - Time1, Time3 - Time2, Time4 - Time3, Time5 - Time4, Time6 - Time5}),
+   exit(normal);
+start(Num, Pid) ->
+   erlang:send(Pid, {over, self(), skip, skip, skip, skip, skip}),
    exit(normal).
 
 init(_Num) ->
