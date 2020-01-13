@@ -162,7 +162,6 @@ remove_repeat([L | List], Result) ->
    end.
 
 
-
 %%根据Key去查List中元素的Nth位相等的匹配到的元素Fun(Element)返回
 find_elements(Key, Nth, List, Fun) ->
    InnerFun = fun(Element) ->

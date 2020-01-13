@@ -114,7 +114,7 @@ isw1(Sec1, Sec2) ->
 
 day_of_the_week(UnixTime) ->
    {{Y, M, D}, _} = sl1(UnixTime),
-   calendar:day_of_the_week(Y, M ,D).
+   calendar:day_of_the_week(Y, M, D).
 
 %% @doc 返回相应类型的unix时间戳
 %% <ul>
@@ -155,7 +155,7 @@ unixtime({next_time, DayTs}) ->
    H :: 0..23,
    I :: 0..59,
    S :: 0..59.
-now_diff(today, {H, I, S})  ->
+now_diff(today, {H, I, S}) ->
    now_diff(0, {H, I, S});
 now_diff(tomorrow, {H, I, S}) ->
    now_diff(1, {H, I, S});
@@ -163,7 +163,7 @@ now_diff(N, {H, I, S}) when is_integer(N), N >= 0 ->
    {_, Time} = calendar:local_time(),
    N * 86400 + calendar:time_to_seconds({H, I, S}) - calendar:time_to_seconds(Time).
 
--spec next_diff(0..86400 | [0..86400]) -> Seconds::pos_integer().
+-spec next_diff(0..86400 | [0..86400]) -> Seconds :: pos_integer().
 next_diff(L = [_ | _]) ->
    lists:min([next_diff(Sec) || Sec <- L]);
 next_diff(Sec) ->
@@ -181,8 +181,8 @@ isw2(Ts, Ts) -> true;
 isw2(Ts1, Ts2) ->
    Dw = day_of_the_week(Ts1),
    Zero = unixtime({today, Ts1}),
-   Beg = Zero - 86400 * (Dw-1),
-   End = Zero + 86400 * (8-Dw),
+   Beg = Zero - 86400 * (Dw - 1),
+   End = Zero + 86400 * (8 - Dw),
    Ts2 >= Beg andalso Ts2 < End.
 
 ism1(Sec1, Sec2) ->
@@ -235,7 +235,7 @@ ms2(Sec) ->
 
 %%%%%%%%%%%%%%%%% **Begin **End 测试对比函数 end   %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 t4(N, Fun) ->
-   persistent_term:put(zonediff,  28800),
+   persistent_term:put(zonediff, 28800),
    tt4(N, Fun).
 
 tt4(0, Fun) ->
@@ -245,19 +245,19 @@ tt4(N, Fun) ->
    tt4(N - 1, Fun).
 
 zone1() ->
-   persistent_term:get(zonediff,  28800).
+   persistent_term:get(zonediff, 28800).
 
 
 zone2() ->
    Local2001 = erlang:universaltime_to_localtime({{2001, 1, 1}, {0, 0, 0}}),
-   io:format("IMY**************** ~p~n",[Local2001]),
+   io:format("IMY**************** ~p~n", [Local2001]),
    erlang:universaltime_to_posixtime(Local2001) - 978307200.
 
 zone3() ->
    NowTime = erlang:universaltime(),
    LoTime = erlang:universaltime_to_localtime(NowTime),
-   io:format("IMY**************** ~p~n",[NowTime]),
-   io:format("IMY**************** ~p~n",[LoTime]),
+   io:format("IMY**************** ~p~n", [NowTime]),
+   io:format("IMY**************** ~p~n", [LoTime]),
    erlang:universaltime_to_posixtime(LoTime) - erlang:universaltime_to_posixtime(NowTime).
 
 tk1() ->
@@ -273,7 +273,7 @@ tk4() ->
    make_ref().
 
 tk5() ->
-   erlang:unique_integer([positive])  rem 16.
+   erlang:unique_integer([positive]) rem 16.
 
 tk6() ->
    erlang:monotonic_time(second).

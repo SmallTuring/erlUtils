@@ -3,7 +3,7 @@
 -compile([export_all, nowarn_unused_function, nowarn_unused_vars, nowarn_export_all]).
 
 t1(N) ->
-   Map = #{etime => {make_ref(), test}, stime => {make_ref(), test}, other => [1212, 132,3242,768]},
+   Map = #{etime => {make_ref(), test}, stime => {make_ref(), test}, other => [1212, 132, 3242, 768]},
    tt1(N, Map).
 
 tt1(0, Map) ->
@@ -19,7 +19,7 @@ tt1(N, Map) ->
    tt1(N - 1, Map).
 
 t2(N) ->
-   Map = #{etime => {make_ref(), test}, stime => {make_ref(), test}, other => [1212, 132,3242,768]},
+   Map = #{etime => {make_ref(), test}, stime => {make_ref(), test}, other => [1212, 132, 3242, 768]},
    tt2(N, Map).
 
 tt2(0, Map) ->
@@ -34,7 +34,7 @@ tt2(N, Map) ->
    tt2(N - 1, Map).
 
 t3(N) ->
-   Map = #{etime => {make_ref(), test}, stime => {make_ref(), test}, other => [1212, 132,3242,768]},
+   Map = #{etime => {make_ref(), test}, stime => {make_ref(), test}, other => [1212, 132, 3242, 768]},
    tt3(N, Map).
 
 tt3(0, Map) ->

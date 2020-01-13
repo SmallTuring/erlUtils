@@ -3,10 +3,10 @@
 -compile([export_all, nowarn_unused_function, nowarn_unused_vars, nowarn_export_all]).
 
 genBinary(N) ->
-   list_to_binary([X rem 256 || X <-  lists:seq(1, N)]).
+   list_to_binary([X rem 256 || X <- lists:seq(1, N)]).
 
 genList(N) ->
-   ([X rem 256 || X <-  lists:seq(1, N)]).
+   ([X rem 256 || X <- lists:seq(1, N)]).
 
 t0(N, Y) ->
    Bin = genBinary(Y),
@@ -92,7 +92,7 @@ t44(N, Y) ->
 tt44(0, List) ->
    ok;
 tt44(N, List) ->
-    <<<<V:64/big>> || V <- List>>,
+   <<<<V:64/big>> || V <- List>>,
    tt44(N - 1, List).
 
 
@@ -124,7 +124,7 @@ tt8(0, List) ->
    ok;
 tt8(N, List) ->
    <<begin case V rem 2 == 1 of true -> <<1>>; _ -> <<0>> end end || V <- List>>,
-   tt4(N - 1, List).
+tt4(N - 1, List).
 
 
 

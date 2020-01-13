@@ -32,7 +32,7 @@ tt3(0, _Md5Bin, HexStr) ->
    HexStr;
 tt3(N, Md5Bin, _HexStr) ->
    <<Hash:128/integer>> = Md5Bin,
-   HexStr =string:to_lower(integer_to_list(Hash, 16)),
+   HexStr = string:to_lower(integer_to_list(Hash, 16)),
    tt3(N - 1, Md5Bin, HexStr).
 
 t4(N, Len) ->

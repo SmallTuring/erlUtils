@@ -10,12 +10,12 @@
    , isHibernate = false
    , lastStatus = init_status
    , lastState = #{11 => 555, 44 => 434}
-   , postponed = [1,3,"dffd", "fdf"]
+   , postponed = [1, 3, "dffd", "fdf"]
    , timers = #{etime => {aaa, fdfd}}
 }).
 
 tt1(N) ->
-   tt1(N, #cycleData{}, [123421,434,34], {12222,343, "fdfd"}, fff, "ArgD").
+   tt1(N, #cycleData{}, [123421, 434, 34], {12222, 343, "fdfd"}, fff, "ArgD").
 
 tt1(0, CycleData, ArgA, ArgB, ArgC, ArgD) ->
    ok;
@@ -28,24 +28,24 @@ tt1(N, #cycleData{lastState = LastState, isEnter = IsEnter, hibernateAfter = Hib
    tt1(N - 1, CycleData, ArgA, ArgB, ArgC, ArgD).
 
 tt2(N) ->
-   tt2(N, #cycleData{}, [123421,434,34], {12222,343, "fdfd"}, fff, "ArgD").
+   tt2(N, #cycleData{}, [123421, 434, 34], {12222, 343, "fdfd"}, fff, "ArgD").
 
 tt2(0, CycleData, ArgA, ArgB, ArgC, ArgD) ->
    ok;
 tt2(N, CycleData, ArgA, ArgB, ArgC, ArgD) ->
    LastState = element(#cycleData.lastState, CycleData),
    IsEnter = element(#cycleData.isEnter, CycleData),
-   HibernateAfter= element(#cycleData.hibernateAfter, CycleData),
+   HibernateAfter = element(#cycleData.hibernateAfter, CycleData),
    Module = element(#cycleData.module, CycleData),
    I1 = is_atom(LastState),
    I2 = is_atom(IsEnter),
    I3 = is_atom(HibernateAfter),
    I4 = is_atom(Module),
    _Ret = I1 andalso I2 andalso I3 andalso I4 andalso true,
-   tt2(N -1, CycleData, ArgA, ArgB, ArgC, ArgD).
+   tt2(N - 1, CycleData, ArgA, ArgB, ArgC, ArgD).
 
 tt3(N) ->
-   tt3(N, #cycleData{}, [123421,434,34], {12222,343, "fdfd"}, fff, "ArgD").
+   tt3(N, #cycleData{}, [123421, 434, 34], {12222, 343, "fdfd"}, fff, "ArgD").
 
 tt3(0, CycleData, ArgA, ArgB, ArgC, ArgD) ->
    ok;
@@ -54,7 +54,7 @@ tt3(N, CycleData, ArgA, ArgB, ArgC, ArgD) ->
    tt3(N - 1, NewCycleData, ArgA, ArgB, ArgC, ArgD).
 
 tt4(N) ->
-   tt4(N, #cycleData{}, [123421,434,34], {12222,343, "fdfd"}, fff, "ArgD").
+   tt4(N, #cycleData{}, [123421, 434, 34], {12222, 343, "fdfd"}, fff, "ArgD").
 
 tt4(0, CycleData, ArgA, ArgB, ArgC, ArgD) ->
    ok;
@@ -62,10 +62,10 @@ tt4(N, CycleData, ArgA, ArgB, ArgC, ArgD) ->
    New1 = setelement(#cycleData.module, CycleData, tttt),
    New2 = setelement(#cycleData.lastState, New1, #{11 => 22, 22 => 33}),
    New3 = setelement(#cycleData.isEnter, New2, false),
-   tt4(N -1, New3, ArgA, ArgB, ArgC, ArgD).
+   tt4(N - 1, New3, ArgA, ArgB, ArgC, ArgD).
 
 tt5(N) ->
-   tt5(N, #cycleData{}, [123421,434,34]).
+   tt5(N, #cycleData{}, [123421, 434, 34]).
 
 tt5(0, CycleData, AA) ->
    ok;
@@ -73,17 +73,17 @@ tt5(N, CycleData, AA) ->
    tt5(N - 1, CycleData, AA).
 
 tt6(N) ->
-   tt6(N,test, false, infinity, false, init_status,  #{11 => 555, 44 => 434}, [1,3,"dffd", "fdf"], #{etime => {aaa, fdfd}}, [123421,434,34]).
+   tt6(N, test, false, infinity, false, init_status, #{11 => 555, 44 => 434}, [1, 3, "dffd", "fdf"], #{etime => {aaa, fdfd}}, [123421, 434, 34]).
 
 tt6(0, A1, B, C, D, E, F, G, H, AA) ->
    ok;
 tt6(N, A1, B, C, D, E, F, G, H, AA) ->
-   tt6(N -1, A1, B, C, D, E, F, G, H, AA).
+   tt6(N - 1, A1, B, C, D, E, F, G, H, AA).
 
 tt7(0) ->
    ok;
 tt7(N) ->
-   tt7(N -1).
+   tt7(N - 1).
 
 
 tt8(N) ->
@@ -94,8 +94,8 @@ tt8(0, CycleData) ->
 tt8(N, #cycleData{module = Module, lastState = Lasst, postponed = Postponed} = AA) ->
    A = setelement(#cycleData.module, AA, ttt),
    B = setelement(#cycleData.isEnter, A, trye),
-  %% B = setelement(#cycleData.lastState, A, #{22 => 555, 55 => 434}),
-  %% C = setelement(#cycleData.postponed, B, [1,3,"fdf", "dffd"]),
+   %% B = setelement(#cycleData.lastState, A, #{22 => 555, 55 => 434}),
+   %% C = setelement(#cycleData.postponed, B, [1,3,"fdf", "dffd"]),
    tt8(N - 1, B).
 
 tt88(N) ->
@@ -136,11 +136,11 @@ tt10(N) ->
    A = get(a),
    put(a, ttt),
    B = get(f),
-   put(f,  #{22 => 555, 55 => 434}),
+   put(f, #{22 => 555, 55 => 434}),
    C = get(g),
-   put(g, [1,3,"fdf", "dffd"]),
+   put(g, [1, 3, "fdf", "dffd"]),
    _Ret = A orelse B orelse C orelse true,
-   tt10(N -1).
+   tt10(N - 1).
 
 c6(N) ->
    cc6(N, 0).
@@ -181,7 +181,7 @@ st4() ->
 gm(0, Fun) ->
    ok;
 gm(N, Fun) ->
-   [?MODULE:Fun(M) || M <- [1,2,3,4,5,6,7,8,9,10,11,12]],
+   [?MODULE:Fun(M) || M <- [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]],
    gm(N - 1, Fun).
 
 %% 这个更快
@@ -211,7 +211,7 @@ getMonth(12) ->
    <<"Dec">>.
 
 getMonth2(Month) ->
-   element(Month,{<<"Jan">>,<<"Feb">>,<<"Mar">>,<<"Apr">>,<<"May">>,<<"Jun">>,<<"Jul">>,<<"Aug">>,<<"Sep">>,<<"Oct">>,<<"Nov">>,<<"Dec">>}).
+   element(Month, {<<"Jan">>, <<"Feb">>, <<"Mar">>, <<"Apr">>, <<"May">>, <<"Jun">>, <<"Jul">>, <<"Aug">>, <<"Sep">>, <<"Oct">>, <<"Nov">>, <<"Dec">>}).
 
 -define(Month, #{1 => <<"Jan">>, 2 => <<"Feb">>, 3 => <<"Mar">>, 4 => <<"Apr">>, 5 => <<"May">>, 6 => <<"Jun">>, 7 => <<"Jul">>, 8 => <<"Aug">>, 9 => <<"Sep">>, 10 => <<"Oct">>, 11 => <<"Nov">>, 12 => <<"Dec">>}).
 getMonth3(Month) ->

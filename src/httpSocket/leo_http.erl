@@ -31,10 +31,10 @@
 -author('Yosuke Hara').
 
 -export([key/2, key/3,
-         get_headers/2, get_headers/3, get_amz_headers/1,
-         get_headers4cow/2, get_headers4cow/3, get_amz_headers4cow/1,
-         rfc1123_date/1, web_date/1, url_encode/2
-        ]).
+   get_headers/2, get_headers/3, get_amz_headers/1,
+   get_headers4cow/2, get_headers4cow/3, get_amz_headers4cow/1,
+   rfc1123_date/1, web_date/1, url_encode/2
+]).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -46,201 +46,201 @@
 %% @doc Retrieve a filename(KEY) from Host and Path.
 %%
 -spec(key(Host, Path) ->
-             {binary(), binary()} when Host::binary(),
-                                       Path::binary()).
+   {binary(), binary()} when Host :: binary(),
+   Path :: binary()).
 key(Host, Path) ->
-    key([?S3_DEFAULT_ENDPOINT], Host, Path).
+   key([?S3_DEFAULT_ENDPOINT], Host, Path).
 
 %% @doc Retrieve a filename(KEY) from Host and Path.
 %%
 -spec(key(EndPoints, Host, Path) ->
-             {binary(), binary()} when EndPoints::[binary()],
-                                       Host::binary(),
-                                       Path::binary()).
+   {binary(), binary()} when EndPoints :: [binary()],
+   Host :: binary(),
+   Path :: binary()).
 key(EndPoints, Host, Path) ->
-    EmptyBin = <<>>,
-    EndPoint = case lists:foldl(
-                      fun(E, Acc) ->
-                              case binary:match(Host, E) of
-                                  nomatch ->
-                                      Acc;
-                                  {_,_} ->
-                                      case (byte_size(Acc) < byte_size(E)) of
-                                          true  -> E;
-                                          false -> Acc
-                                      end
-                              end
-                      end, EmptyBin, EndPoints) of
-                   EmptyBin ->
-                       [];
-                   Ret ->
-                       Ret
-               end,
-    key_1(EndPoint, Host, Path).
+   EmptyBin = <<>>,
+   EndPoint = case lists:foldl(
+      fun(E, Acc) ->
+         case binary:match(Host, E) of
+            nomatch ->
+               Acc;
+            {_, _} ->
+               case (byte_size(Acc) < byte_size(E)) of
+                  true -> E;
+                  false -> Acc
+               end
+         end
+      end, EmptyBin, EndPoints) of
+                 EmptyBin ->
+                    [];
+                 Ret ->
+                    Ret
+              end,
+   key_1(EndPoint, Host, Path).
 
 
 %% @doc Retrieve a filename(KEY) from Host and Path.
 %% @private
 key_1(EndPoint, Host, Path) ->
-    Index = case EndPoint of
-                [] ->
-                    0;
-                _ ->
-                    case binary:match(Host, EndPoint) of
-                        nomatch ->
-                            0;
-                        {Pos, _} ->
-                            Pos + 1
-                    end
-            end,
-    key_2(Index, Host, Path).
+   Index = case EndPoint of
+              [] ->
+                 0;
+              _ ->
+                 case binary:match(Host, EndPoint) of
+                    nomatch ->
+                       0;
+                    {Pos, _} ->
+                       Pos + 1
+                 end
+           end,
+   key_2(Index, Host, Path).
 
 
 %% @doc "S3-Bucket" is equal to the host.
 %% @private
 key_2(0, Host, Path) ->
-    case binary:match(Path, [?SLASH_BIN]) of
-        nomatch ->
-            {Host, <<Host/binary, ?SLASH_BIN/binary>>};
-        _ ->
-            [_, Top|_] = binary:split(Path, [?SLASH_BIN], [global]),
-            case Top of
-                Host ->
-                    Path2 = binary:part(Path, {1, byte_size(Path) -1}),
-                    case binary:split(Path2, [?SLASH_BIN], [global]) of
-                        [] ->
-                            {?EMPYT_BIN, Path2};
-                        [Bucket|_] ->
-                            {Bucket, Path2}
-                    end;
-                _ ->
-                    {Host, <<Host/binary, Path/binary>>}
-            end
-    end;
+   case binary:match(Path, [?SLASH_BIN]) of
+      nomatch ->
+         {Host, <<Host/binary, ?SLASH_BIN/binary>>};
+      _ ->
+         [_, Top | _] = binary:split(Path, [?SLASH_BIN], [global]),
+         case Top of
+            Host ->
+               Path2 = binary:part(Path, {1, byte_size(Path) - 1}),
+               case binary:split(Path2, [?SLASH_BIN], [global]) of
+                  [] ->
+                     {?EMPYT_BIN, Path2};
+                  [Bucket | _] ->
+                     {Bucket, Path2}
+               end;
+            _ ->
+               {Host, <<Host/binary, Path/binary>>}
+         end
+   end;
 
 %% @doc "S3-Bucket" is included in the path
 %% @private
-key_2(1,_Host, ?SLASH_BIN) ->
-    {?EMPYT_BIN, ?SLASH_BIN};
+key_2(1, _Host, ?SLASH_BIN) ->
+   {?EMPYT_BIN, ?SLASH_BIN};
 
-key_2(1,_Host, Path) ->
-    case binary:match(Path, [?SLASH_BIN]) of
-        nomatch ->
-            {?EMPYT_BIN, ?SLASH_BIN};
-        _ ->
-            Path2 = binary:part(Path, {1, byte_size(Path) -1}),
-            case binary:split(Path2, [?SLASH_BIN], [global]) of
-                [] ->
-                    {?EMPYT_BIN, Path2};
-                [Bucket|_] ->
-                    {Bucket, Path2}
-            end
-    end;
+key_2(1, _Host, Path) ->
+   case binary:match(Path, [?SLASH_BIN]) of
+      nomatch ->
+         {?EMPYT_BIN, ?SLASH_BIN};
+      _ ->
+         Path2 = binary:part(Path, {1, byte_size(Path) - 1}),
+         case binary:split(Path2, [?SLASH_BIN], [global]) of
+            [] ->
+               {?EMPYT_BIN, Path2};
+            [Bucket | _] ->
+               {Bucket, Path2}
+         end
+   end;
 
 %% @doc "S3-Bucket" is included in the host
 %% @private
 key_2(Index, Host, Path) ->
-    Bucket = binary:part(Host, {0, Index -2}),
-    {Bucket, <<Bucket/binary, Path/binary>>}.
+   Bucket = binary:part(Host, {0, Index - 2}),
+   {Bucket, <<Bucket/binary, Path/binary>>}.
 
 
 %% @doc Retrieve AMZ-S3-related headers
 %%      assume that TreeHeaders is generated by mochiweb_header
 %%
 -spec(get_headers(TreeHeaders, FilterFun) ->
-             list() when TreeHeaders::gb_trees:tree(),
-                         FilterFun::function()).
+   list() when TreeHeaders :: gb_trees:tree(),
+   FilterFun :: function()).
 get_headers(TreeHeaders, FilterFun) when is_function(FilterFun) ->
-    Iter = gb_trees:iterator(TreeHeaders),
-    get_headers(Iter, FilterFun, []).
+   Iter = gb_trees:iterator(TreeHeaders),
+   get_headers(Iter, FilterFun, []).
 
 %% @doc Retrieve AMZ-S3-related headers
 %%      assume that TreeHeaders is generated by mochiweb_header
 %%
 -spec(get_headers(TreeHeaders, FilterFun, Acc) ->
-             list() when TreeHeaders::gb_trees:iter(),
-                         FilterFun::function(),
-                         Acc::[any()]
-                              ).
+   list() when TreeHeaders :: gb_trees:iter(),
+   FilterFun :: function(),
+   Acc :: [any()]
+).
 get_headers(Iter, FilterFun, Acc) ->
-    case gb_trees:next(Iter) of
-        none ->
-            Acc;
-        {Key, Val, Iter2} ->
-            case FilterFun(Key) of
-                true ->  get_headers(Iter2, FilterFun, [Val|Acc]);
-                false -> get_headers(Iter2, FilterFun, Acc)
-            end
-    end.
+   case gb_trees:next(Iter) of
+      none ->
+         Acc;
+      {Key, Val, Iter2} ->
+         case FilterFun(Key) of
+            true -> get_headers(Iter2, FilterFun, [Val | Acc]);
+            false -> get_headers(Iter2, FilterFun, Acc)
+         end
+   end.
 
 
 %% @doc Retrieve headers for cowboy
 %%
 -spec(get_headers4cow(Headers, FilterFun) ->
-             list() when Headers::[any()],
-                         FilterFun::function()).
+   list() when Headers :: [any()],
+   FilterFun :: function()).
 get_headers4cow(Headers, FilterFun) when is_function(FilterFun) ->
-    get_headers4cow(Headers, FilterFun, []).
+   get_headers4cow(Headers, FilterFun, []).
 
 %% @doc Retrieve headers for Cowboy
 %%
 -spec(get_headers4cow(Headers, FilterFun, Acc) ->
-             [{string(), string()}] when Headers::[{binary(), binary()}],
-                                         FilterFun::function(),
-                                         Acc::[any()]).
+   [{string(), string()}] when Headers :: [{binary(), binary()}],
+   FilterFun :: function(),
+   Acc :: [any()]).
 get_headers4cow([], _FilterFun, Acc) ->
-    Acc;
-get_headers4cow([{K, V}|Rest], FilterFun, Acc) when is_binary(K) ->
-    case FilterFun(K) of
-        true ->
-            get_headers4cow(Rest, FilterFun,
-                            [{binary_to_list(K), binary_to_list(V)}|Acc]);
-        false ->
-            get_headers4cow(Rest, FilterFun, Acc)
-    end;
-get_headers4cow([_|Rest], FilterFun, Acc) ->
-    get_headers4cow(Rest, FilterFun, Acc).
+   Acc;
+get_headers4cow([{K, V} | Rest], FilterFun, Acc) when is_binary(K) ->
+   case FilterFun(K) of
+      true ->
+         get_headers4cow(Rest, FilterFun,
+            [{binary_to_list(K), binary_to_list(V)} | Acc]);
+      false ->
+         get_headers4cow(Rest, FilterFun, Acc)
+   end;
+get_headers4cow([_ | Rest], FilterFun, Acc) ->
+   get_headers4cow(Rest, FilterFun, Acc).
 
 
 %% @doc Retrieve AMZ-S3-related headers
 %%
 -spec(get_amz_headers(TreeHeaders) ->
-             list() when TreeHeaders::gb_trees:tree()).
+   list() when TreeHeaders :: gb_trees:tree()).
 get_amz_headers(TreeHeaders) ->
-    get_headers(TreeHeaders, fun is_amz_header/1).
+   get_headers(TreeHeaders, fun is_amz_header/1).
 
 %% @doc Retrieve AMZ-S3-related headers for Cowboy
 %%
 -spec(get_amz_headers4cow(ListHeaders) ->
-             [{string(), string()}] when ListHeaders::[{binary(), binary()}]).
+   [{string(), string()}] when ListHeaders :: [{binary(), binary()}]).
 get_amz_headers4cow(ListHeaders) ->
-    get_headers4cow(ListHeaders, fun is_amz_header/1).
+   get_headers4cow(ListHeaders, fun is_amz_header/1).
 
 
 %% @doc Retrieve RFC-1123 formated data
 %%
 -spec(rfc1123_date(DateSec) ->
-             string() when DateSec::integer()).
+   string() when DateSec :: integer()).
 rfc1123_date(DateSec) ->
-    %% NOTE:
-    %%   Don't use http_util:rfc1123 on R14B*.
-    %%   In this func, There is no error handling for `local_time_to_universe`
-    %%   So badmatch could occur. This result in invoking huge context switched.
-    {{Y,M,D},{H,MI,S}} = calendar:gregorian_seconds_to_datetime(DateSec),
-    Mon = month(M),
-    W = weekday(Y,M,D),
-    lists:flatten(
+   %% NOTE:
+   %%   Don't use http_util:rfc1123 on R14B*.
+   %%   In this func, There is no error handling for `local_time_to_universe`
+   %%   So badmatch could occur. This result in invoking huge context switched.
+   {{Y, M, D}, {H, MI, S}} = calendar:gregorian_seconds_to_datetime(DateSec),
+   Mon = month(M),
+   W = weekday(Y, M, D),
+   lists:flatten(
       io_lib:format("~3s, ~2.10.0B ~3s ~4.10B ~2.10.0B:~2.10.0B:~2.10.0B GMT",
-                    [W, D, Mon, Y, H, MI, S])).
+         [W, D, Mon, Y, H, MI, S])).
 
 
 %% @doc Convert gregorian seconds to date formated data( YYYY-MM-DDTHH:MI:SS000Z )
 %%
 -spec(web_date(GregSec) ->
-             string() when GregSec::integer()).
+   string() when GregSec :: integer()).
 web_date(GregSec) when is_integer(GregSec) ->
-    {{Y,M,D},{H,MI,S}} = calendar:gregorian_seconds_to_datetime(GregSec),
-    lists:flatten(io_lib:format("~4.10.0B-~2.10.0B-~2.10.0BT~2.10.0B:~2.10.0B:~2.10.0B.000Z",[Y,M,D,H,MI,S])).
+   {{Y, M, D}, {H, MI, S}} = calendar:gregorian_seconds_to_datetime(GregSec),
+   lists:flatten(io_lib:format("~4.10.0B-~2.10.0B-~2.10.0BT~2.10.0B:~2.10.0B:~2.10.0B.000Z", [Y, M, D, H, MI, S])).
 
 
 %%--------------------------------------------------------------------
@@ -249,21 +249,21 @@ web_date(GregSec) when is_integer(GregSec) ->
 %% @doc Is it AMZ-S3's header?
 %% @private
 -spec(is_amz_header(string()|binary()) ->
-             boolean()).
+   boolean()).
 is_amz_header(<<"x-amz-", _Rest/binary>>) -> true;
 is_amz_header(<<"X-Amz-", _Rest/binary>>) -> true;
 is_amz_header(Key) when is_binary(Key) ->
-    false;
+   false;
 is_amz_header(Key) ->
-    (string:str(string:to_lower(Key), "x-amz-") == 1).
+   (string:str(string:to_lower(Key), "x-amz-") == 1).
 
 
 %% @doc Get weekday as string
 %% @private
 -spec(weekday(pos_integer(), pos_integer(), pos_integer()) ->
-             string()).
+   string()).
 weekday(Y, M, D) ->
-    weekday(calendar:day_of_the_week(Y, M, D)).
+   weekday(calendar:day_of_the_week(Y, M, D)).
 weekday(1) -> "Mon";
 weekday(2) -> "Tue";
 weekday(3) -> "Wed";
@@ -276,16 +276,16 @@ weekday(7) -> "Sun".
 %% @doc Get month as string
 %% @private
 -spec(month(pos_integer()) ->
-             string()).
-month( 1) -> "Jan";
-month( 2) -> "Feb";
-month( 3) -> "Mar";
-month( 4) -> "Apr";
-month( 5) -> "May";
-month( 6) -> "Jun";
-month( 7) -> "Jul";
-month( 8) -> "Aug";
-month( 9) -> "Sep";
+   string()).
+month(1) -> "Jan";
+month(2) -> "Feb";
+month(3) -> "Mar";
+month(4) -> "Apr";
+month(5) -> "May";
+month(6) -> "Jun";
+month(7) -> "Jul";
+month(8) -> "Aug";
+month(9) -> "Sep";
 month(10) -> "Oct";
 month(11) -> "Nov";
 month(12) -> "Dec".
@@ -297,42 +297,42 @@ month(12) -> "Dec".
 %% instead.
 -spec url_encode(binary(), [noplus|upper|noslash]) -> binary().
 url_encode(Bin, Opts) ->
-    Plus = not lists:member(noplus, Opts),
-    Upper = lists:member(upper, Opts),
-    Slash = not lists:member(noslash, Opts),
-    url_encode(Bin, <<>>, Plus, Upper, Slash).
+   Plus = not lists:member(noplus, Opts),
+   Upper = lists:member(upper, Opts),
+   Slash = not lists:member(noslash, Opts),
+   url_encode(Bin, <<>>, Plus, Upper, Slash).
 
 -spec url_encode(binary(), binary(), boolean(), boolean(), boolean()) -> binary().
-url_encode(<<C, Rest/binary>>, Acc, P=Plus, U=Upper, S=Slash) ->
-    if C >= $0,
-       C =< $9 ->
-            url_encode(Rest, <<Acc/binary, C>>, P, U, S);
-       C >= $A,
-       C =< $Z ->
-            url_encode(Rest, <<Acc/binary, C>>, P, U, S);
-       C >= $a,
-       C =< $z ->
-            url_encode(Rest, <<Acc/binary, C>>, P, U, S);
-       C =:= $.;
-       C =:= $-;
-       C =:= $~;
-       C =:= $_ ->
-            url_encode(Rest, <<Acc/binary, C>>, P, U, S);
+url_encode(<<C, Rest/binary>>, Acc, P = Plus, U = Upper, S = Slash) ->
+   if C >= $0,
+   C =< $9 ->
+      url_encode(Rest, <<Acc/binary, C>>, P, U, S);
+      C >= $A,
+      C =< $Z ->
+         url_encode(Rest, <<Acc/binary, C>>, P, U, S);
+      C >= $a,
+      C =< $z ->
+         url_encode(Rest, <<Acc/binary, C>>, P, U, S);
+      C =:= $.;
+      C =:= $-;
+      C =:= $~;
+      C =:= $_ ->
+         url_encode(Rest, <<Acc/binary, C>>, P, U, S);
 
-       C =:= $/ , not Slash ->
-            url_encode(Rest, <<Acc/binary, $/>>, P, U, S);
-       C =:= $ , Plus ->
-            url_encode(Rest, <<Acc/binary, $+>>, P, U, S);
+      C =:= $/, not Slash ->
+         url_encode(Rest, <<Acc/binary, $/>>, P, U, S);
+      C =:= $ , Plus ->
+         url_encode(Rest, <<Acc/binary, $+>>, P, U, S);
 
-       true ->
-            H = C band 16#F0 bsr 4,
-            L = C band 16#0F,
-            H1 = if Upper -> to_hexu(H); true -> to_hexl(H) end,
-            L1 = if Upper -> to_hexu(L); true -> to_hexl(L) end,
-            url_encode(Rest, <<Acc/binary, $%, H1, L1>>, P, U, S)
-    end;
+      true ->
+         H = C band 16#F0 bsr 4,
+         L = C band 16#0F,
+         H1 = if Upper -> to_hexu(H); true -> to_hexl(H) end,
+         L1 = if Upper -> to_hexu(L); true -> to_hexl(L) end,
+         url_encode(Rest, <<Acc/binary, $%, H1, L1>>, P, U, S)
+   end;
 url_encode(<<>>, Acc, _Plus, _Upper, _Slash) ->
-    Acc.
+   Acc.
 
 -spec to_hexu(byte()) -> byte().
 to_hexu(C) when C < 10 -> $0 + C;

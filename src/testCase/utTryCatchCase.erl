@@ -25,7 +25,7 @@ do_t1(N) ->
          erlang:garbage_collect(),
          Result = erlang:process_info(self(), [memory, garbage_collection]),
          io:format("IMY************************* ~p~n  ~w ~n", [N, Result]);
-         %io:format("IMY&&&&&&&&&&&&&&&&&&&&&&&&& ~p~n backtrace:~p~n~n", [N, erlang:process_display(self(), backtrace)]);
+      %io:format("IMY&&&&&&&&&&&&&&&&&&&&&&&&& ~p~n backtrace:~p~n~n", [N, erlang:process_display(self(), backtrace)]);
       _ ->
          ignore
    end,
@@ -190,7 +190,7 @@ do_exit() ->
       io:format("IMY**************************do_exit try555~n")
    catch
       _A ->
-       io:format("IMY**************************do_exit catch ~p ~n", [_A])
+         io:format("IMY**************************do_exit catch ~p ~n", [_A])
    after
       io:format("IMY**************************do_exit after ~n")
    end.

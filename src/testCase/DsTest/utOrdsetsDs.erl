@@ -3,7 +3,7 @@
 
 -export([start/2]).
 
-start(Num, Pid) ->
+start(Num, Pid) when Num =< 65536 ->
    Ds = init(Num),
    Time1 = erlang:system_time(nanosecond),
    NewDsI = insert(Num, Ds),
@@ -17,6 +17,9 @@ start(Num, Pid) ->
    delete(Num, NewDsF),
    Time6 = erlang:system_time(nanosecond),
    erlang:send(Pid, {over, self(), Time2 - Time1, Time3 - Time2, not_support, Time5 - Time4, Time6 - Time5}),
+   exit(normal);
+start(Num, Pid) ->
+   erlang:send(Pid, {over, self(), skip, skip, skip, skip, skip}),
    exit(normal).
 
 init(_Num) ->
