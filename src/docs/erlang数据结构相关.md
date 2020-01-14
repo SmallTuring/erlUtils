@@ -318,3 +318,6 @@ Unique Integers on a Runtime System Instance
      %%     单单在排序上，maps的实用性就不如lists了，所以在数据结构选择上就需要多多斟酌。另外record在查询上使用的是模式匹配，性能只会更高，
      %%     但需要提前定义字段，可扩展性差，在热更这块有不少坑，maps也可以用模式匹配查询，但也要确保key值存在，不然就nomatch，
      %%     但整体上maps更优于record，故建议用maps替代record。
+     
+## 顺序
+number < atom < reference < fun < port < pid < tuple < map < nil < list < bit string     

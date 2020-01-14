@@ -8,11 +8,11 @@ start(Num, Pid) when Num =< 65536 ->
    Time1 = erlang:system_time(nanosecond),
    NewDsI = insert(Num, Ds),
    Time2 = erlang:system_time(nanosecond),
-   NewDsR = read(Num, NewDsI),
+   NewDsR = read(Num, NewDsI, undefined),
    Time3 = erlang:system_time(nanosecond),
    NewDsU = update(Num, NewDsR),
    Time4 = erlang:system_time(nanosecond),
-   NewDsF = for(Num, NewDsU),
+   NewDsF = for(Num, NewDsU, undefined),
    Time5 = erlang:system_time(nanosecond),
    delete(Num, NewDsF),
    Time6 = erlang:system_time(nanosecond),
@@ -28,29 +28,30 @@ init(Num) ->
 insert(0, Ds) ->
    Ds;
 insert(Num, Ds) ->
-   Key = utTestDs:makeK(Num),
+   % Key = utTestDs:makeK(Num),
    NewDs = erlang:setelement(Num, Ds, utTestDs:makeV(Num)),
    insert(Num - 1, NewDs).
 
-read(0, Ds) ->
+read(0, Ds, _V) ->
    Ds;
-read(Num, Ds) ->
-   Key = utTestDs:makeK(Num),
+read(Num, Ds, _V) ->
+   % Key = utTestDs:makeK(Num),
    Value = erlang:element(Num, Ds),
-   read(Num - 1, Ds).
+
+   read(Num - 1, Ds, Value).
 
 update(0, Ds) ->
    Ds;
 update(Num, Ds) ->
-   Key = utTestDs:makeK(Num),
+   % Key = utTestDs:makeK(Num),
    NewDs = erlang:setelement(Num, Ds, utTestDs:makeV2(Num)),
    update(Num - 1, NewDs).
 
-for(0, Ds) ->
+for(0, Ds, _V) ->
    Ds;
-for(Num, Ds) ->
+for(Num, Ds, _V) ->
    Value = erlang:element(Num, Ds),
-   for(Num - 1, Ds).
+   for(Num - 1, Ds, Value).
 
 delete(Num, Ds) ->
    ok.

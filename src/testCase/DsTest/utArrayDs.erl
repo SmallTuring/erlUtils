@@ -23,27 +23,27 @@ init(Num) ->
    array:new(Num, fixed).
 
 insert(0, Ds) ->
-   Key = utTestDs:makeK(0),
+   % Key = utTestDs:makeK(0),
    array:set(0, utTestDs:makeV(0), Ds);
 insert(Num, Ds) ->
-   Key = utTestDs:makeK(Num),
+   % Key = utTestDs:makeK(Num),
    NewDs = array:set(Num, utTestDs:makeV(Num), Ds),
    insert(Num - 1, NewDs).
 
 read(0, Ds) ->
-   Key = utTestDs:makeK(0),
+   % Key = utTestDs:makeK(0),
    Value = array:get(0, Ds),
    Ds;
 read(Num, Ds) ->
-   Key = utTestDs:makeK(Num),
+   % Key = utTestDs:makeK(Num),
    Value = array:get(Num, Ds),
    read(Num - 1, Ds).
 
 update(0, Ds) ->
-   Key = utTestDs:makeK(0),
+   % Key = utTestDs:makeK(0),
    array:set(0, utTestDs:makeV2(0), Ds);
 update(Num, Ds) ->
-   Key = utTestDs:makeK(Num),
+   % Key = utTestDs:makeK(Num),
    NewDs = array:set(Num, utTestDs:makeV2(Num), Ds),
    update(Num - 1, NewDs).
 

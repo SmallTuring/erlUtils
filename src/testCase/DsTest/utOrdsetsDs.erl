@@ -29,7 +29,6 @@ insert(0, Ds) ->
    Ds;
 insert(Num, Ds) ->
    Key = utTestDs:makeK(Num),
-   Value = utTestDs:makeV(Num),
    NewDs = ordsets:add_element(Key, Ds),
    insert(Num - 1, NewDs).
 

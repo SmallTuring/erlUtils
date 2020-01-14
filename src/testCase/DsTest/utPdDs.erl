@@ -8,7 +8,7 @@ start(Num, Pid) ->
    Time1 = erlang:system_time(nanosecond),
    NewDsI = insert(Num, Ds),
    Time2 = erlang:system_time(nanosecond),
-   NewDsR = read(Num, NewDsI),
+   NewDsR = read(Num, NewDsI, undefined),
    Time3 = erlang:system_time(nanosecond),
    NewDsU = update(Num, NewDsR),
    Time4 = erlang:system_time(nanosecond),
@@ -30,13 +30,12 @@ insert(Num, Ds) ->
    erlang:put(Key, Value),
    insert(Num - 1, Ds).
 
-read(0, Ds) ->
+read(0, Ds, _V) ->
    Ds;
-read(Num, Ds) ->
+read(Num, Ds, _V) ->
    Key = utTestDs:makeK(Num),
    Value = erlang:get(Key),
-   V = if Value == 1 -> 1; true -> 2 end,
-   read(Num - 1, Ds).
+   read(Num - 1, Ds, Value).
 
 update(0, Ds) ->
    Ds;
