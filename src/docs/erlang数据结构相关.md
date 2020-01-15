@@ -194,14 +194,6 @@ Unique Integers on a Runtime System Instance
             years. That is, for the foreseeable future they are unique
             enough.
 ```  
-
-# Erlang标准数据结构的选择
-  实际上，Erlang程序使用列表（本机或通过dict）来处理涉及多达数百个元素的数据结构，并使用ETS（Erlang术语存储）或mnesia来处理更大的数据。
-  ETS使用散列来允许几乎恒定时间访问几乎任意数量的数据。
-  对于由几个（几十个或几百个）项组成的数据集合，列表通常要优于ETS和树。 对于大量小物品，ETS往往效果最好。 对于较大的项目，平衡树可以胜过ETS，因为它们避免了复制数据。
-  Suggestion：
-  elments count: 0 － 100 | 100 - 10000  |  10000 -
-  our select   :  list   |      ets     |  gb_tree
   
 # Erlang 常用数据结构实现
     erlang虚拟机中用Eterm表示所有的类型的数据，具体的实施方案通过占用Eterm的后几位作为类型标签，然后根据标签类型来解释剩余位的用途。这个标签是多层级的，最外层占用两位，有三种类型： 
@@ -279,45 +271,30 @@ Unique Integers on a Runtime System Instance
         在实现上，array最外层被包装为一个record:
      ... 其他等待被添加   
      
-     %% Module	Description
-     %% sets	   sets, a collection of unique elements.
-     %% gb_sets	sets, but based on a general balanced data structure
-     %% gb_tree	a general balanced tree
-     %% dict	   maps, also called associative arrays
-     %% queue	   double-ended queues
-     %% ets	   hash tables and ordered sets (trees), stored outside the process
-     %% dets	   on-disk hash tables
-     (请注意：不常用的模块ordset和 orddict只是有序列表，因此对于诸如插入之类的常见操作具有O（n）)
-     % Suggestion：
-     % elments count: 0 － 100 | 100 - 10000  |  10000 -
-     % our select   :  list   |      ets     |  gb_tree
-     
-     
-     %% 用于测试erlang各种数据结构 读写遍历等操作的效率
-     %%  lists ，maps 和record是erlang最为常用的数据结构，lists使用方便简单，maps则查询高效，record则需要预定义，
-     %% 可扩展性差，各有各的优。本文做一下lists和maps的性能对比（再对比一下dict），代码如下（record操作不便则不做比较）。
-     
-     %%通过注释部分代码做以下测试
-     %%timer:tc(lib_test, test_struct, [10000,#{}]).
-     %%timer:tc(lib_test, test_struct, [10000,[]]).
-     
-     %% 做10000次的插入查询测试结果：
-     %%
-     %%     lists 50736微秒
-     %%     maps 4670微秒
-     %%     dict 60236微秒
-     %% 做10000次的遍历结果：
-     %%
-     %%     lists 523微秒
-     %%     maps 8337微秒
-     %%     dict 4426微秒
-     %% 对比总结：
-     %%
-     %%     对比测试数据maps在查询性能上比lists高10倍以上， 而在遍历上lists则更优。对于频繁插入和查询的数据，maps是最佳的选择，
-     %%     lists则适用于广播列表之类需要遍历的数据。除此之外，个人觉得在使用上lists 比maps更为方便，因为lists模块提供了大量实用的函数，
-     %%     单单在排序上，maps的实用性就不如lists了，所以在数据结构选择上就需要多多斟酌。另外record在查询上使用的是模式匹配，性能只会更高，
-     %%     但需要提前定义字段，可扩展性差，在热更这块有不少坑，maps也可以用模式匹配查询，但也要确保key值存在，不然就nomatch，
-     %%     但整体上maps更优于record，故建议用maps替代record。
-     
 ## 顺序
-number < atom < reference < fun < port < pid < tuple < map < nil < list < bit string     
+number < atom < reference < fun < port < pid < tuple < map < nil < list < bit string 
+       %% Module	Description
+       %% sets	   sets, a collection of unique elements.
+       %% gb_sets	sets, but based on a general balanced data structure
+       %% gb_tree	a general balanced tree
+       %% dict	   maps, also called associative arrays
+       %% queue	   double-ended queues
+       %% ets	   hash tables and ordered sets (trees), stored outside the process
+       %% dets	   on-disk hash tables
+       (请注意：不常用的模块ordset和 orddict只是有序列表，因此对于诸如插入之类的常见操作具有O（n）)
+
+# Erlang标准数据结构的选择
+  实际上，Erlang程序使用列表（本机或通过dict）来处理涉及多达数百个元素的数据结构，
+  并使用ETS（Erlang术语存储）或mnesia来处理更大的数据。
+  ETS使用散列来允许几乎恒定时间访问几乎任意数量的数据。
+  对于由几个（几十个或几百个）项组成的数据集合，列表通常要优于ETS和树。 对于大量小物品，ETS往往效果最好。
+   对于较大的项目，数据插入ets和从ets读取都会复制数据, 需要掂量。
+
+  lists ，maps 和record是erlang最为常用的数据结构，lists使用方便简单，maps则查询高效，record则需要预定义，
+  对比测试数据maps在查询性能上比lists高， 而在遍历上lists则更优。对于频繁插入和查询的数据，maps是最佳的选择，
+  record在数据量小的情况下 插入 更新 查询效率都很高， 而且使用的是模式匹配也很方便
+  lists则适用于广播列表之类需要遍历的数据和数据量少的情况。
+  更多数据结构
+  utPdDs, utArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs, utEtsOrdDs, utDictDs, utGb_treesDs, utSetsDs, utGb_setsDs, utOrddictDs, utOrdsetsDs, utAtomicsDs, utPTermDs
+  测试代码见 testCase/DsTest
+  数据结构测评结果见 dosc/erlang-DsBenchMark.txt

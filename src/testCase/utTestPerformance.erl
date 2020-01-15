@@ -222,4 +222,18 @@ getMonth3(Month) ->
          <<"">>
    end.
 
+-define(List, [1, 2, 3234235, <<"fdsfasf">>,  <<"fdsfasf111111111111111111111111">>, [3434,43,434], tryrer, {rqwrer, 342144}, #{23424 => "fdsfsdafsaf"}, {432143, "fdsaf", 76767}]).
+
+ht(0, _Fun) ->
+   ok;
+ht(N, Fun) ->
+   [?MODULE:Fun(Term) || Term <- ?List],
+   ht(N - 1, Fun).
+
+hash1(Term) ->
+   erlang:phash(Term, 256).
+
+hash2(Term) ->
+   erlang:phash2(Term, 256).
+
 
