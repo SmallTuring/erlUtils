@@ -8,21 +8,19 @@
    , delete = []
 }).
 
-% -define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 524288, 1048576]).
--define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024]).
+-define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 524288, 1048576]).
+%%-define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024, 2048, 4096, 8192, 16384]).
 -define(DsList, [utPdDs, utArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs, utEtsOrdDs, utDictDs, utGb_treesDs, utSetsDs, utGb_setsDs, utOrddictDs, utOrdsetsDs, utAtomicsDs, utPTermDs]).
--define(Cnt, 5).
+-define(Cnt, 32).
 
 start() ->
    %%erlang:process_flag(trap_exit, true),
    erlang:erase(),
-   %{ok, File} = file:open("log/erlang-DsBenchMark.txt", [write, append]),
-   %erlang:put(pd_file, File),
-   fileLog("Ds benchmark...", []),
+   printLog("Ds benchmark...", []),
    runDs(?DsList, ?V_NUM),
-   fileLog("Ds benchmark...Over calculate the AVG~n", []),
+   printLog("Ds benchmark...Over calculate the AVG~n", []),
    runAvg(?DsList, ?V_NUM).
-   %file:close(File).
+
 
 runDs([Ds | T], VNumList) ->
    printTitle(),
@@ -49,7 +47,7 @@ runExe(Num, Ds) ->
       {over, Pid, Insert, Read, Update, For, Delete} ->
          storeStatistics(Ds, Num, Insert, Read, Update, For, Delete),
          {_, DsName} = lists:split(2, atom_to_list(Ds)),
-         fileLog("~-9.s ~8.s ~12.s ~12.s ~10.s ~12.s ~10.s ~14.s ~10.s ~12.s ~12.s ~12.s ~n",
+         printLog("~-9.s ~8.s ~12.s ~12.s ~10.s ~12.s ~10.s ~14.s ~10.s ~12.s ~12.s ~12.s ~n",
             [DsName, integer_to_list(Num), timeToStr(Insert), calcPer(Insert, Num), timeToStr(Read), calcPer(Read, Num), timeToStr(Update), calcPer(Update, Num), timeToStr(For), calcPer(For, Num), timeToStr(Delete), calcPer(Delete, Num)]);
       {'EXIT', Pid, normal} ->
          ok;
@@ -67,7 +65,7 @@ runAvg([], _VNumList) ->
 runCal([Num | T], Ds) ->
    #tempCnt{insert = InsertList, read = ReadList, update = UpdateList, for = ForList, delete = DeleteList} = getStatistics(Ds, Num),
    {_, DsName} = lists:split(2, atom_to_list(Ds)),
-   fileLog("~-9.s ~8.s ~12.s ~12.s ~14.s ~12.s ~12.s~n",
+   printLog("~-9.s ~8.s ~12.s ~12.s ~14.s ~12.s ~12.s~n",
       [DsName, integer_to_list(Num), calcAvg(InsertList, Num), calcAvg(ReadList, Num), calcAvg(UpdateList, Num), calcAvg(ForList, Num), calcAvg(DeleteList, Num)]),
    runCal(T, Ds);
 runCal([], _Ds) ->
@@ -83,11 +81,11 @@ timeToStr(not_support) ->
 timeToStr(skip) ->
    <<"skip">>;
 timeToStr(Time) when Time > ?S ->
-   float_to_list(Time / ?S, [{decimals, 2}, compact]) ++ "s";
+   float_to_list(Time / ?S, [{decimals, 2}]) ++ "s";
 timeToStr(Time) when Time > ?MS ->
-   float_to_list(Time / ?MS, [{decimals, 2}, compact]) ++ "ms";
+   float_to_list(Time / ?MS, [{decimals, 2}]) ++ "ms";
 timeToStr(Time) when Time > ?US ->
-   float_to_list(Time / ?US, [{decimals, 2}, compact]) ++ "us";
+   float_to_list(Time / ?US, [{decimals, 2}]) ++ "us";
 timeToStr(Time) ->
    integer_to_list(Time) ++ "ns".
 
@@ -96,7 +94,7 @@ calcPer(not_support, _Num) ->
 calcPer(skip, _Num) ->
    <<"skip">>;
 calcPer(Time, Num) ->
-   float_to_list(Time / Num, [{decimals, 2}, compact]) ++ "ns".
+   float_to_list(Time / Num, [{decimals, 2}]) ++ "ns".
 
 calcAvg([not_support | _], Num) ->
    <<"notSupport">>;
@@ -107,7 +105,7 @@ calcAvg(CntList, Num) ->
    AvgCnt = ?Cnt - 2,
    SortList = lists:sort(CntList),
    AvgList = lists:sublist(SortList, 2,AvgCnt),
-   float_to_list(lists:sum(AvgList) / AvgCnt / Num, [{decimals, 2}, compact]) ++ "ns".
+   float_to_list(lists:sum(AvgList) / AvgCnt / Num, [{decimals, 2}]) ++ "ns".
 
 storeStatistics(Ds, Num, Insert, Read, Update, For, Delete) ->
    #tempCnt{insert = InsertList, read = ReadList, update = UpdateList, for = ForList, delete = DeleteList} =
@@ -124,19 +122,21 @@ getStatistics(Ds, Num) ->
    erlang:get({Ds, Num}).
 
 printTitle() ->
-   fileLog("~n~-9.s ~8.s ~12.s ~12.s ~10.s ~12.s ~10.s ~14.s ~10.s ~12.s ~12.s ~12.s ~n",
+   printLog("~n~-9.s ~8.s ~12.s ~12.s ~10.s ~12.s ~10.s ~14.s ~10.s ~12.s ~12.s ~12.s ~n",
       ["DsName", "V_Num", "insert", "insert/per", "read", "read/per", "update", "update/per", "for", "for/per", "delete", "delete/per"]),
-   fileLog("~s ~n", [[$= || _ <- lists:seq(1, 145)]]).
+   printLog("~s ~n", [[$= || _ <- lists:seq(1, 145)]]).
 
 printAvg() ->
-   fileLog("~n~-9.s ~8.s ~12.s ~12.s ~14.s ~12.s ~12.s~n",
+   printLog("~n~-9.s ~8.s ~12.s ~12.s ~14.s ~12.s ~12.s~n",
       ["DsName", "V_Num", "insert/per", "read/per", "update/per", "for/per", "delete/per"]),
-   fileLog("~s ~n", [[$= || _ <- lists:seq(1, 85)]]).
+   printLog("~s ~n", [[$= || _ <- lists:seq(1, 85)]]).
 
-fileLog(Format, Args) ->
-   %File = erlang:get(pd_file),
+printLog(Format, Args) ->
+   % {ok, File} = file:open("src/docs/erlang-DsBenchMark.txt", [write, append]),
+   % io:format(File, Format, Args),
+   % file:close(File).
    io:format(Format, Args).
-   %io:format(File, Format, Args).
+
 
 makeK(N) ->
    case N rem 4 of
