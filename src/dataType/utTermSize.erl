@@ -85,7 +85,7 @@ internal_test() ->
     32 = byteSize(<<$a, $b, $c>>, 8),
     8 = byteSize([], 8),
     24 = byteSize([0|[]], 8),
-    24 = byteSize([1|2], 8), % improper list
+    24 = byteSize([1|2], 8), % itime_tmproper list
     16 = byteSize({}, 8),
     24 = byteSize({0}, 8),
     8 = byteSize(0, 8),

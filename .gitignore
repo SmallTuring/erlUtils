@@ -23,3 +23,6 @@ priv
 *.iml
 cmake-build*
 CMakeLists.txt
+
+*.pdb
+compile_commands.json
