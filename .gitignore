@@ -24,5 +24,7 @@ priv
 cmake-build*
 CMakeLists.txt
 
+# nif compile temp file
 *.pdb
+*.d
 compile_commands.json
