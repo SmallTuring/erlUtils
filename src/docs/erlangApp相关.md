@@ -12,8 +12,8 @@
 		{maxT,Time},%%app运行时间 单位毫秒  
 		{registered,[mod]},%%指定app 名字模块，systools用来解决名字冲突  
 		{included_applictions ,[XX]},%%指定子 app，只加载，但是不启动  
-		{applictions,[xxxx]},%%启动自己的app前，将会首先启动此列表的app  
-		{env,[xxxx]},%%配置app的env，可以使用application:get_env获取  
+		{applictions,[xxxx]},%%启动自己的app前，appliation:ensure_all_started将会首先启动此列表的app application:start会检查该列表是否都启动 
+		{env,[xxxx]},%%配置app的env，可以使用application:get_env(AppName, Key)获取  
 		{mod,{xxx,args}},%%指定app启动模块，参数，对应自己app的application behavior  
 		{start_phases,[{xxx,xxx}]]%%指定启动阶段一些操作，对应otp application  start_phase函数  
 	]  
