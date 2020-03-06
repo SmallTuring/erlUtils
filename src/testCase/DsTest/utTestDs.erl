@@ -9,10 +9,10 @@
 }).
 
 %-define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024, 2048, 4096, 8192, 16384, 32768, 65536, 131072, 524288, 1048576]).
--define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024, 2048, 4096, 8192, 16384, 32768]).
--define(DsList, [utPdDs, utArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs, utEtsOrdDs, utDictDs, utGb_treesDs, utSetsDs, utGb_setsDs, utOrddictDs, utOrdsetsDs, utAtomicsDs, utPTermDs, utArrayDs1, utHashBblDs, utHashBblDs1]).
-%-define(DsList, [utPdDs, utArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs,  utArrayDs1, utHashBblDs, utHashBblDs1]).
-%-define(DsList, [utMapsDs, utArrayDs1, utHashBblDs]).
+-define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024, 2048, 4096, 8192, 16384]).
+%-define(DsList, [utPdDs, utArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs, utEtsOrdDs, utDictDs, utGb_treesDs, utSetsDs, utGb_setsDs, utOrddictDs, utOrdsetsDs, utAtomicsDs, utPTermDs, utArrayDs1, utHashBblDs, utHashBblDs1]).
+%-define(DsList, [utPdDs, utArrayDs, utNifArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs,  utArrayDs1, utHashBblDs, utHashBblDs1, utKhashDs]).
+-define(DsList, [utPdDs, utArrayDs, utNifArrayDs, utNifHashbDs, utKhashDs, utEtsSetDs, utTupleDs, utMapsDs]).
 
 -define(Cnt, 12).
 
@@ -177,4 +177,7 @@ makeV2(N) ->
       3 ->
          {N, <<"test-testDs">>}
    end.
+
+makeRandV() ->
+   utGenTerm:any().
 

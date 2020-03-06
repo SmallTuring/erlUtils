@@ -236,4 +236,47 @@ hash1(Term) ->
 hash2(Term) ->
    erlang:phash2(Term, 256).
 
+hashn1(Term) ->
+   nifHashb:hash1(Term, 256).
+
+hashn2(Term) ->
+   nifHashb:hash2(Term, 256).
+
+hashn3(Term) ->
+   nifHashb:hash3(Term, 256).
+
+ht1(0, _Fun, Term) ->
+   ok;
+ht1(N, Fun, Term) ->
+   ?MODULE:Fun(Term),
+   ht1(N - 1, Fun, Term).
+
+hash3(Term) ->
+   erlang:phash(Term, 256).
+
+hash4(Term) ->
+   erlang:phash2(Term, 256).
+
+ttT(0, Fun) ->
+   ?MODULE:Fun(0);
+ttT(N, Fun) ->
+   ?MODULE:Fun(N),
+   ttT(N - 1, Fun).
+
+nifT(N) ->
+   [nifArray:test(Term) || Term <- ?List].
+
+nifT1(N) ->
+   [nifArray:test1(Term) || Term <- ?List].
+
+cb(N, Len, Fun) ->
+   Bin = utGenTerm:genBinary(Len),
+   cddo(N, Bin, Fun).
+
+cddo(0, Bin, Fun) ->
+   nifHashb:Fun(Bin, Bin);
+cddo(N, Bin, Fun) ->
+   nifHashb:Fun(Bin, Bin),
+   cddo(N - 1, Bin, Fun).
+
 

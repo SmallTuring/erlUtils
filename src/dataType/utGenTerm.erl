@@ -15,7 +15,7 @@
     genString/1,
     genBinary/1,
     genBitstring/1,
-    genBignum/1,
+    genBigNum/1,
     genFunction/1
 ]).
 
@@ -23,10 +23,10 @@ any() ->
     any(16).
 
 any(MaxSize) when MaxSize =< 0 ->
-    Fun = choice(value_types()),
+    Fun = choice(valueTypes()),
     ?MODULE:Fun(MaxSize);
 any(MaxSize) ->
-    Fun = choice(all_types()),
+    Fun = choice(allTypes()),
     ?MODULE:Fun(MaxSize).
 
 genAtom(MaxSize) ->
@@ -67,9 +67,12 @@ genShortString(_) ->
     Size = rand:uniform(255),
     [rand:uniform(127) || _ <- lists:seq(1, Size)].
 
-genString(_) ->
+genString() ->
     Size = rand:uniform(4096),
     [rand:uniform(127) || _ <- lists:seq(1, Size)].
+
+genString(MaxSize) ->
+    [rand:uniform(255) || _ <- lists:seq(1, MaxSize)].
 
 genBinary(MaxSize) ->
     list_to_binary(genString(MaxSize)).
@@ -78,30 +81,30 @@ genBitstring(MaxSize) ->
     B = genBinary(MaxSize),
     <<2:4/integer, B/binary>>.
 
-genBignum(_) ->
+genBigNum(_) ->
     16#FFFFFFFFFFFFFFFF + rand:uniform(16#FFFFFFFF).
 
 genFunction(_) ->
-    choice(all_types()).
+    choice(allTypes()).
 
 choice(Options) ->
     lists:nth(rand:uniform(length(Options)), Options).
 
-value_types() ->
+valueTypes() ->
     [
-        gen_atom,
-        gen_integer,
-        gen_float,
-        gen_reference,
-        gen_port,
-        gen_pid,
-        gen_short_string,
-        gen_string,
-        gen_binary,
-        gen_bitstring,
-        gen_bignum,
-        gen_function
+        genAtom,
+        genInteger,
+        genFloat,
+        genReference,
+        genPort,
+        genPid,
+        genShortString,
+        genString,
+        genBinary,
+        genBitstring,
+        genBigNum,
+        genFunction
     ].
 
-all_types() ->
-    value_types() ++ [gen_tuple, gen_list].
+allTypes() ->
+    valueTypes() ++ [genTuple, genList].

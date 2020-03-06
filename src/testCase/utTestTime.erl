@@ -267,7 +267,7 @@ tk2() ->
    os:system_time(microsecond).
 
 tk3() ->
-   erlang:system_time(nanosecond).
+   erlang:system_time(nFanosecond).
 
 tk4() ->
    make_ref().
