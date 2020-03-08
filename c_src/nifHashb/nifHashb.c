@@ -327,41 +327,35 @@ static ERL_NIF_TERM get(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
     }
     //enif_fprintf(stdout, "IMY************get1111\n");
 
-
-    uint32_t BblIndex_1, BblIndex_2;
-    if(!enif_get_uint(env, argv[1], &BblIndex_1)) {
+    ErlNifBinary getKey;
+    if (!enif_term_to_binary(env, argv[1], &getKey))
         return enif_make_badarg(env);
-    }
 
-    //enif_fprintf(stdout, "IMY************get22221111\n");
-
-    if(!enif_get_uint(env, argv[2], &BblIndex_2)) {
-        return enif_make_badarg(env);
-    }
     //enif_fprintf(stdout, "IMY************get2222\n");
-    BblIndex_1 = BblIndex_1 % ResPtr->bblSize_1;
-    BblIndex_2 = BblIndex_2 % ResPtr->bblSize_2;
+    uint32_t BblIndex_1, BblIndex_2;
+    BblIndex_1 = murmurhash(getKey.data, getKey.size, 131) % ResPtr->bblSize_1;
+    BblIndex_2 = murmurhash(getKey.data, getKey.size, 16777619) % ResPtr->bblSize_2;
     //enif_fprintf(stdout, "IMY************get3333\n");
     if (NULL == ResPtr->arrayPtr[BblIndex_1][BblIndex_2].head) {
         //enif_fprintf(stdout, "IMY************get4444\n");
+        enif_release_binary(&getKey);
         return undefined;
     } else {
-        //enif_fprintf(stdout, "IMY************get55555\n");
-        ErlNifBinary getKey;
-        if (!enif_inspect_binary(env, argv[3], &getKey))
-            return enif_make_badarg(env);
+       // enif_fprintf(stdout, "IMY************get55555\n");
         node *Head = ResPtr->arrayPtr[BblIndex_1][BblIndex_2].head;
         while (Head) {
-            //enif_fprintf(stdout, "IMY************get7777\n");
+           // enif_fprintf(stdout, "IMY************get7777\n");
             if (compareBin(getKey, Head->Key) == 0) {
                 ERL_NIF_TERM Ret;
                 enif_binary_to_term(env, Head->Value.data, Head->Value.size, &Ret, 0);
                 //enif_fprintf(stdout, "IMY************get5555\n");
+                enif_release_binary(&getKey);
                 return Ret;
             }
             Head = Head->next;
         }
         //enif_fprintf(stdout, "IMY************get6666\n");
+        enif_release_binary(&getKey);
         return undefined;
     }
 }
@@ -374,33 +368,23 @@ static ERL_NIF_TERM put(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
     }
     //enif_fprintf(stdout, "IMY************put111 \n");
 
-    uint32_t BblIndex_1, BblIndex_2;
-    if(!enif_get_uint(env, argv[1], &BblIndex_1)) {
-        return enif_make_badarg(env);
-    }
-    if(!enif_get_uint(env, argv[2], &BblIndex_2)) {
-        return enif_make_badarg(env);
-    }
-
-    BblIndex_1 = BblIndex_1 % ResPtr->bblSize_1;
-    BblIndex_2 = BblIndex_2 % ResPtr->bblSize_2;
-
     ErlNifBinary Key, Value;
-    if (!enif_inspect_binary(env, argv[3], &Key))
+    if (!enif_term_to_binary(env, argv[1], &Key))
         return enif_make_badarg(env);
 
-    if (!enif_inspect_binary(env, argv[4], &Value))
+    if (!enif_term_to_binary(env, argv[2], &Value))
         return enif_make_badarg(env);
 
+    uint32_t BblIndex_1, BblIndex_2;
+    BblIndex_1 = murmurhash(Key.data, Key.size, 131) % ResPtr->bblSize_1;
+    BblIndex_2 = murmurhash(Key.data, Key.size, 16777619) % ResPtr->bblSize_2;
     //enif_fprintf(stdout, "IMY************put222  %d %d \n", BblIndex_1, BblIndex_2);
 
     //enif_fprintf(stdout, "IMY************put3333 \n");
     if (NULL == ResPtr->arrayPtr[BblIndex_1][BblIndex_2].head) {
         node *NewNode = enif_alloc(sizeof(node));
-        enif_alloc_binary(Key.size, &NewNode->Key);
-        enif_alloc_binary(Value.size, &NewNode->Value);
-        memcpy(NewNode->Key.data, Key.data, Key.size);
-        memcpy(NewNode->Value.data, Value.data, Value.size);
+        NewNode->Key = Key;
+        NewNode->Value = Value;
         NewNode->next = NULL;
         ResPtr->arrayPtr[BblIndex_1][BblIndex_2].head = NewNode;
         ResPtr->keySize = ResPtr->keySize + 1;
@@ -412,12 +396,10 @@ static ERL_NIF_TERM put(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
             if (compareBin(Key, Head->Key) == 0) {
                 //ERL_NIF_TERM Ret;
                 ErlNifBinary OldValue = Head->Value;
-                enif_release_binary(&OldValue);
                 //enif_binary_to_term(env, OldValue.data, OldValue.size, &Ret, 0);
-                ErlNifBinary NewValue;
-                enif_alloc_binary(Value.size, &NewValue);
-                memcpy(NewValue.data, Value.data, Value.size);
-                Head->Value = NewValue;
+                Head->Value = Value;
+                enif_release_binary(&OldValue);
+                enif_release_binary(&Key);
                 //enif_fprintf(stdout, "IMY************put55555 \n");
                 //return Ret;
                 return ok;
@@ -425,10 +407,8 @@ static ERL_NIF_TERM put(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
             Head = Head->next;
         }
         node *NewNode = enif_alloc(sizeof(node));
-        enif_alloc_binary(Key.size, &NewNode->Key);
-        enif_alloc_binary(Value.size, &NewNode->Value);
-        memcpy(NewNode->Key.data, Key.data, Key.size);
-        memcpy(NewNode->Value.data, Value.data, Value.size);
+        NewNode->Key = Key;
+        NewNode->Value = Value;
         NewNode->next = ResPtr->arrayPtr[BblIndex_1][BblIndex_2].head;
         ResPtr->arrayPtr[BblIndex_1][BblIndex_2].head = NewNode;
         ResPtr->keySize = ResPtr->keySize + 1;
@@ -440,8 +420,8 @@ static ERL_NIF_TERM put(ErlNifEnv *env, int argc, const ERL_NIF_TERM argv[]) {
 
 static ErlNifFunc nifFuns[] = {
         {"new",         0, new},
-        {"get",         4, get},
-        {"put",         5, put},
+        {"get",         2, get},
+        {"put",         3, put},
         {"hash1",       2, hash1},
         {"hash2",       2, hash2},
         {"hash3",       2, hash3},

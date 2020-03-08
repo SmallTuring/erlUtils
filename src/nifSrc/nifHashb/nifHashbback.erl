@@ -1,4 +1,4 @@
--module(nifHashbbak).
+-module(nifHashbback).
 
 -on_load(init/0).
 
@@ -34,9 +34,22 @@ new() ->
    erlang:nif_error({nif_not_loaded, module, ?MODULE, line, ?LINE}).
 
 get(Ref, Key) ->
+   KeyBin = erlang:term_to_binary(Key),
+   Hash1 = erlang:phash2(KeyBin),
+   Hash2 = erlang:phash2(KeyBin, 123211111),
+   get(Ref, Hash1, Hash2, KeyBin).
+
+get(Ref, Hash1, Hash2, KeyBin) ->
    erlang:nif_error({nif_not_loaded, module, ?MODULE, line, ?LINE}).
 
 put(Ref, Key, Value) ->
+   KeyBin = erlang:term_to_binary(Key),
+   ValueBin = erlang:term_to_binary(Value),
+   Hash1 = erlang:phash2(KeyBin),
+   Hash2 = erlang:phash2(KeyBin, 123211111),
+   put(Ref, Hash1, Hash2, KeyBin, ValueBin).
+
+put(Ref, Hash1, Hash2, Key, Value) ->
    erlang:nif_error({nif_not_loaded, module, ?MODULE, line, ?LINE}).
 
 hash1(Term, Range) ->
