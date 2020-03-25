@@ -8,13 +8,21 @@ path 新增
 	
 LIB
 	D:\Windows Kits\10\Lib\10.0.18362.0\ucrt\x64
-	D:\Windows Kits\10\Lib\10.0.18362.0\ucrt\x64
+	D:\Windows Kits\10\Lib\10.0.18362.0\um\x64
 	D:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.24.28314\lib\x64
 
 INCLUDE
 	D:\Windows Kits\10\Include\10.0.18362.0\ucrt
 	D:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.24.28314\include
 ```
+
+### 脚本配置
+    VsDevCmd.bat 文件设置适当的环境变量来生成命令行。
+     备注
+        Visual Studio 2015 及更早版本基于相同目的使用 VSVARS32.bat，而不是 VsDevCmd.bat。
+        此文件保存在 
+        Program Files\Microsoft Visual Studio\Version \Common7\Tools 或
+        Program Files (x86)\Microsoft Visual Studio\Version \Common7\Tools。
 	
 ## 第二种 在vs单独编译 然后拷贝使用	
     VS编译 

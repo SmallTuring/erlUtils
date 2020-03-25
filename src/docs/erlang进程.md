@@ -136,7 +136,7 @@ end
    调用erlang:demonitor(Reference)可以移除监视器，
    调用erlang:demonitor(Reference,[flush])可以让该监视进程邮箱中所有与Reference对应的{'DOWN', Reference,process,Pid,Reason}
    的消息被冲刷掉。
-   如果尝试监视一个不存在的进程会导致收到一条{'DOWN', process, Pid,Reason}的消息，其中Reason为noproc，这和link()不一样
+   如果尝试监视一个不存在的进程会导致收到一条{'DOWN', Reference, process, Pid,Reason}的消息，其中Reason为noproc，这和link()不一样
 
 ## 进程调度
 就目前计算机体系结构而言，任何进程或线程要执行就需要得到CPU资源，对于erlang的进程同样如此。erlang虚拟机同时存在成千上万的进程，
