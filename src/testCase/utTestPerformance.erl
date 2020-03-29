@@ -279,4 +279,18 @@ cddo(N, Bin, Fun) ->
    nifHashb:Fun(Bin, Bin),
    cddo(N - 1, Bin, Fun).
 
+cc1(0, A1, A2) ->
+   A1 / A2;
+cc1(N, A1, A2) ->
+   A1 / A2,
+   cc1(N - 1, A1, A2).
+
+cc2(0, A1, A2) ->
+   A1 div A2;
+cc2(N, A1, A2) ->
+   A1 div A2,
+   cc2(N - 1, A1, A2).
+
+
+
 
