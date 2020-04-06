@@ -279,17 +279,86 @@ cddo(N, Bin, Fun) ->
    nifHashb:Fun(Bin, Bin),
    cddo(N - 1, Bin, Fun).
 
-cc1(0, A1, A2) ->
+cc1(0, A1, A2, _V) ->
    A1 / A2;
-cc1(N, A1, A2) ->
-   A1 / A2,
-   cc1(N - 1, A1, A2).
+cc1(N, A1, A2, _V) ->
+   V = A1 / A2,
+   cc1(N - 1, A1, A2, V).
 
-cc2(0, A1, A2) ->
+cc2(0, A1, A2, _V) ->
    A1 div A2;
-cc2(N, A1, A2) ->
-   A1 div A2,
-   cc2(N - 1, A1, A2).
+cc2(N, A1, A2, _V) ->
+   V = A1 div A2,
+   cc2(N - 1, A1, A2, V).
+
+call1(N, Y) ->
+   KVList = [{{value, test, Index, Index}, {value, test, Index, Index}} || Index <- lists:seq(1, Y)],
+   utKvsToBeam:load(ttttt, KVList),
+   T = erlang:system_time(microsecond),
+   A = ?MODULE,
+   Fun = get,
+   call1(N, Y, T, A, Fun, 0).
+
+call1(0, A1, A2, _A, _Fun, _V) ->
+   Key = rand:uniform(A1),
+   V = ttttt:get({value, test, Key, Key}),
+   {erlang:system_time(microsecond) - A2, V};
+call1(N, A1, A2, A, Fun, _V) ->
+   Key = rand:uniform(A1),
+   V = ttttt:get({value, test, Key, Key}),
+   call1(N - 1, A1, A2, A, Fun, V).
+
+get1({value, test, 1500, 1500}) ->
+   {value, test, 1500, 1500}.
+
+call2(N, Y) ->
+   A = ?MODULE,
+   Fun = get1,
+   T = erlang:system_time(microsecond),
+   call2(N, Y, T, A, Fun, 0).
+
+call2(0, _A1, A2, A, Fun, _V) ->
+   V = ?MODULE:Fun({value, test, 1500, 1500}),
+   {erlang:system_time(microsecond) - A2, V};
+call2(N, A1, A2, A, Fun, _Key) ->
+   Key = rand:uniform(A1),
+   _V = ?MODULE:Fun({value, test, 1500, 1500}),
+   call2(N - 1, A1, A2, A, Fun, Key).
+
+call3(N, Y) ->
+   A = ?MODULE,
+   Fun = get1,
+   T = erlang:system_time(microsecond),
+   call3(N, Y, T, A, Fun, 0).
+
+call3(0, _A1, A2, A, Fun, _K) ->
+   _V = erlang:apply(A, Fun, [{value, test, 1500, 1500}]),
+   {erlang:system_time(microsecond) - A2, _K};
+call3(N, A1, A2, A, Fun, _key) ->
+   Key = rand:uniform(A1),
+   _V = erlang:apply(A, Fun, [{value, test, 1500, 1500}]),
+   call3(N - 1, A1, A2, A, Fun, Key).
+
+call4(N, Y) ->
+   A = ?MODULE,
+   Fun = get1,
+   T = erlang:system_time(microsecond),
+   call4(N, Y, T, A, Fun, 0).
+
+call4(0, _A1, A2, A, Fun, _K) ->
+   erlang:apply(A, Fun, [{value, test, 1500, 1500}]),
+   {erlang:system_time(microsecond) - A2, _K};
+call4(N, A1, A2, A, Fun, _key) ->
+   Key = rand:uniform(A1),
+   Args = [{value, test, 1500, 1500}],
+   erlang:apply(A, Fun, Args),
+   call4(N - 1, A1, A2, A, Fun, Key).
+
+
+
+
+
+
 
 
 
