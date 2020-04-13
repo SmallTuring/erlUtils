@@ -312,7 +312,7 @@ get1({value, test, 1500, 1500}) ->
    {value, test, 1500, 1500}.
 
 call2(N, Y) ->
-   A = ?MODULE,
+   A = utFunCallCase,
    Fun = get1,
    T = erlang:system_time(microsecond),
    call2(N, Y, T, A, Fun, 0).

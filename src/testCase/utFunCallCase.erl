@@ -267,7 +267,5 @@ tt166(N) ->
    put({test, 2}, #handler{id = Ret}),
    tt166(N - 1).
 
-
-
-
-
+get1({value, test, 1500, 1500}) ->
+   {value, test, 1500, 1500}.
