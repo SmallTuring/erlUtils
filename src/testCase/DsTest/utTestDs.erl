@@ -12,7 +12,7 @@
 -define(V_NUM, [8, 16, 32, 64, 128, 256, 516, 1024, 2048, 4096, 8192, 16384]).
 %-define(DsList, [utPdDs, utArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs, utEtsOrdDs, utDictDs, utGb_treesDs, utSetsDs, utGb_setsDs, utOrddictDs, utOrdsetsDs, utAtomicsDs, utPTermDs, utArrayDs1, utHashBblDs, utHashBblDs1]).
 %-define(DsList, [utPdDs, utArrayDs, utNifArrayDs, utTupleDs, utListsDs, utMapsDs, utEtsSetDs,  utArrayDs1, utHashBblDs, utHashBblDs1, utKhashDs]).
--define(DsList, [utPdDs, utArrayDs, utNifArrayDs, utNifHashbDs, utKhashDs, utEtsSetDs, utTupleDs, utMapsDs]).
+-define(DsList, [utPdDs, utArrayDs, utNifArrayDs, utNifHashbDs, utKhashDs, utEtsSetDs, utTupleDs, utMapsDs, utSetsDs, utCerlSetsDs]).
 
 -define(Cnt, 12).
 
